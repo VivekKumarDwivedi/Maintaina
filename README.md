@@ -76,6 +76,7 @@ npm start
 society-maintenance-tracker/
 ├── backend/
 │   ├── src/
+|   |   ├── config/            # Env Configuration
 │   │   ├── controllers/       # Route handlers
 │   │   ├── middleware/        # Auth, file upload
 │   │   ├── models/            # Sequelize models
@@ -261,23 +262,6 @@ If `isImportant` is true, emails all registered residents.
 
 ### Option 2 — Ethereal (testing only)
 Leave `EMAIL_USER` and `EMAIL_PASS` blank. Emails will be logged to console with a `[EMAIL MOCK]` prefix but not actually sent.
-
----
-
-## 🌐 Deployment
-
-### Backend → Render / Railway
-1. Create a new Web Service
-2. Set root directory to `backend/`
-3. Build command: `npm install`
-4. Start command: `node src/index.js`
-5. Add all `.env` variables in the service dashboard
-6. For production, set `FRONTEND_URL` to your Vercel URL
-
-### Frontend → Vercel
-1. Create a new project, set root to `frontend/`
-2. Add env var: `REACT_APP_API_URL=https://your-backend.onrender.com/api`
-3. Deploy
 
 ---
 
