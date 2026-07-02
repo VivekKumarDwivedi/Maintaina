@@ -102,6 +102,75 @@ society-maintenance-tracker/
 
 Uses **SQLite** via Sequelize (zero-config for development). In production, swap for PostgreSQL by updating the Sequelize dialect and connection string.
 
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    USERS ||--o{ COMPLAINTS : submits
+    USERS ||--o{ COMPLAINT_HISTORY : "initiates (actor)"
+    COMPLAINTS ||--o{ COMPLAINT_HISTORY : generates
+    USERS ||--o{ NOTICES : creates
+    
+    USERS {
+        int id PK
+        string name
+        string email UK
+        string password
+        enum role "resident, admin"
+        string flatNumber
+        string phone
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    COMPLAINTS {
+        int id PK
+        string title
+        text description
+        enum category "Plumbing, Electrical, Structural, etc"
+        enum status "Open, In Progress, Resolved, Closed"
+        enum priority "Low, Medium, High"
+        string photoPath
+        boolean isOverdue
+        timestamp resolvedAt
+        timestamp closedAt
+        int residentId FK
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    COMPLAINT_HISTORY {
+        int id PK
+        int complaintId FK
+        int actorId FK
+        string fromStatus
+        string toStatus
+        string fromPriority
+        string toPriority
+        text note
+        enum action "created, status_changed, priority_changed, flagged_overdue"
+        timestamp createdAt
+    }
+    
+    NOTICES {
+        int id PK
+        string title
+        text content
+        boolean isImportant
+        int adminId FK
+        timestamp createdAt
+        timestamp updatedAt
+    }
+```
+
+**Key Relationships:**
+- **Users → Complaints**: One resident can submit many complaints (1:M via `residentId`)
+- **Complaints → ComplaintHistory**: One complaint generates many history records (1:M)
+- **Users → ComplaintHistory**: One user can perform many actions on complaints (1:M via `actorId`)
+- **Users → Notices**: One admin can create many notices (1:M via `adminId`)
+
+---
+
 ### Users
 | Column     | Type    | Notes                      |
 |------------|---------|----------------------------|
