@@ -1,4 +1,4 @@
-import nodemailer, { Transporter } from 'nodemailer';
+import nodemailer, { Transporter } from "nodemailer";
 
 let transporter: Transporter | null = null;
 let useEthereal = false;
@@ -8,16 +8,16 @@ const getTransporter = async (): Promise<Transporter> => {
 
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.EMAIL_PORT || '587', 10) || 587,
-      secure: process.env.EMAIL_SECURE === 'true',
+      host: process.env.EMAIL_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.EMAIL_PORT || "587", 10) || 587,
+      secure: process.env.EMAIL_SECURE === "true",
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
     useEthereal = false;
   } else {
     const testAccount = await nodemailer.createTestAccount();
     transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
+      host: "smtp.ethereal.email",
       port: 587,
       secure: false,
       auth: {
@@ -26,27 +26,35 @@ const getTransporter = async (): Promise<Transporter> => {
       },
     });
     useEthereal = true;
-    console.log('[EMAIL] Using Ethereal preview account:', testAccount.user);
-    console.log('[EMAIL] Preview messages at https://ethereal.email/messages');
+    console.log("[EMAIL] Using Ethereal preview account:", testAccount.user);
+    console.log("[EMAIL] Preview messages at https://ethereal.email/messages");
   }
 
   return transporter;
 };
 
-const logPreviewUrl = (info: any) => {
+const logPreviewUrl = (info: unknown) => {
   if (useEthereal) {
-    const url = nodemailer.getTestMessageUrl(info);
+    const url = nodemailer.getTestMessageUrl(
+      info as Parameters<typeof nodemailer.getTestMessageUrl>[0]
+    );
     if (url) {
-      console.log('[EMAIL PREVIEW] View message at:', url);
+      console.log("[EMAIL PREVIEW] View message at:", url);
     }
   }
 };
 
-const sendComplaintStatusUpdate = async (resident: any, complaint: any, newStatus: string, note?: string) => {
+const sendComplaintStatusUpdate = async (
+  resident: { email: string; name: string },
+  complaint: { id: number; title: string; category: string },
+  newStatus: string,
+  note?: string
+) => {
   try {
     const t = await getTransporter();
     const info = await t.sendMail({
-      from: process.env.EMAIL_FROM || 'Society Maintenance <noreply@society.com>',
+      from:
+        process.env.EMAIL_FROM || "Society Maintenance <noreply@society.com>",
       to: resident.email,
       subject: `Complaint #${complaint.id} Status Update: ${newStatus}`,
       html: `
@@ -59,28 +67,39 @@ const sendComplaintStatusUpdate = async (resident: any, complaint: any, newStatu
                 <td style="padding:8px;border:1px solid #e2e8f0">${newStatus}</td></tr>
             <tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc"><strong>Category</strong></td>
                 <td style="padding:8px;border:1px solid #e2e8f0">${complaint.category}</td></tr>
-            ${note ? `<tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc"><strong>Note</strong></td>
-                <td style="padding:8px;border:1px solid #e2e8f0">${note}</td></tr>` : ''}
+            ${
+              note
+                ? `<tr><td style="padding:8px;border:1px solid #e2e8f0;background:#f8fafc"><strong>Note</strong></td>
+                <td style="padding:8px;border:1px solid #e2e8f0">${note}</td></tr>`
+                : ""
+            }
           </table>
           <p style="color:#64748b;font-size:12px;margin-top:24px">Society Maintenance Tracker</p>
         </div>
       `,
     });
     logPreviewUrl(info);
-  } catch (err: any) {
-    console.error('Email send error:', err.message);
+  } catch (err: unknown) {
+    console.error(
+      "Email send error:",
+      err instanceof Error ? err.message : err
+    );
   }
 };
 
-const sendImportantNotice = async (residents: any[], notice: any) => {
+const sendImportantNotice = async (
+  residents: { email: string }[],
+  notice: { title: string; content: string }
+) => {
   try {
     if (!residents.length) return;
 
     const t = await getTransporter();
     const info = await t.sendMail({
-      from: process.env.EMAIL_FROM || 'Society Maintenance <noreply@society.com>',
-      to: process.env.EMAIL_FROM || 'Society Maintenance <noreply@society.com>',
-      bcc: residents.map(r => r.email).join(','),
+      from:
+        process.env.EMAIL_FROM || "Society Maintenance <noreply@society.com>",
+      to: process.env.EMAIL_FROM || "Society Maintenance <noreply@society.com>",
+      bcc: residents.map((r) => r.email).join(","),
       subject: `📢 Important Notice: ${notice.title}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
@@ -95,8 +114,11 @@ const sendImportantNotice = async (residents: any[], notice: any) => {
       `,
     });
     logPreviewUrl(info);
-  } catch (err: any) {
-    console.error('Email send error:', err.message);
+  } catch (err: unknown) {
+    console.error(
+      "Email send error:",
+      err instanceof Error ? err.message : err
+    );
   }
 };
 

@@ -1,4 +1,4 @@
-# System Design Write-Up — Society Maintenance Tracker
+# System Design Write-Up — Maintaina (Society Maintenance Tracker)
 
 ## Overview
 

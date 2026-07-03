@@ -1,4 +1,5 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
+import type { Sequelize } from "sequelize";
 
 class Notice extends Model {
   public id!: number;
@@ -8,16 +9,19 @@ class Notice extends Model {
   public adminId!: number;
 }
 
-export default (sequelize: any) => {
-  Notice.init({
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    title: { type: DataTypes.STRING, allowNull: false },
-    content: { type: DataTypes.TEXT, allowNull: false },
-    isImportant: { type: DataTypes.BOOLEAN, defaultValue: false },
-    adminId: { type: DataTypes.INTEGER, allowNull: false },
-  }, {
-    sequelize,
-  });
+export default (sequelize: Sequelize) => {
+  Notice.init(
+    {
+      id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+      title: { type: DataTypes.STRING, allowNull: false },
+      content: { type: DataTypes.TEXT, allowNull: false },
+      isImportant: { type: DataTypes.BOOLEAN, defaultValue: false },
+      adminId: { type: DataTypes.INTEGER, allowNull: false },
+    },
+    {
+      sequelize,
+    }
+  );
 
   return Notice;
 };

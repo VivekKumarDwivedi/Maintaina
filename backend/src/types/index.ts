@@ -1,11 +1,11 @@
-import { Request } from 'express';
+import { Request } from "express";
 
 export interface User {
   id: number;
   name: string;
   email: string;
   password: string;
-  role: 'resident' | 'admin';
+  role: "resident" | "admin";
   flatNumber?: string;
   phone?: string;
 }

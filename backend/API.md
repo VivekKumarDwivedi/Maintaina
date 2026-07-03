@@ -1,4 +1,4 @@
-# Society Maintenance Tracker — API Documentation
+# Maintaina (Society Maintenance Tracker — API Documentation)
 
 **Base URL:** `http://localhost:5002/api`  
 **Environment:** Development (Port configurable via `PORT` env var, defaults to 5002)
@@ -27,9 +27,11 @@ Tokens are JWT signed with `JWT_SECRET` and expire after `JWT_EXPIRES_IN` (defau
 ### Auth
 
 #### `POST /auth/register`
+
 Create a new resident account.
 
 **Request Body:**
+
 ```json
 {
   "name": "John Doe",
@@ -44,6 +46,7 @@ Create a new resident account.
 **Optional:** `flatNumber`, `phone`
 
 **Response (201):**
+
 ```json
 {
   "user": {
@@ -60,15 +63,18 @@ Create a new resident account.
 ```
 
 **Errors:**
+
 - `400` — Missing required fields
 - `409` — Email already registered
 
 ---
 
 #### `POST /auth/login`
+
 Log in with email and password.
 
 **Request Body:**
+
 ```json
 {
   "email": "john@example.com",
@@ -77,6 +83,7 @@ Log in with email and password.
 ```
 
 **Response (200):**
+
 ```json
 {
   "user": {
@@ -93,17 +100,20 @@ Log in with email and password.
 ```
 
 **Errors:**
+
 - `400` — Missing email or password
 - `401` — Invalid credentials
 
 ---
 
 #### `GET /auth/profile`
+
 Get the current authenticated user's profile.
 
 **Headers:** `Authorization: Bearer <token>`
 
 **Response (200):**
+
 ```json
 {
   "user": {
@@ -119,6 +129,7 @@ Get the current authenticated user's profile.
 ```
 
 **Errors:**
+
 - `401` — Unauthorized (missing or invalid token)
 - `404` — User not found
 
@@ -127,19 +138,23 @@ Get the current authenticated user's profile.
 ### Complaints
 
 #### `POST /complaints`
+
 Create a new complaint (resident only). Supports optional photo upload.
 
 **Headers:**
+
 - `Authorization: Bearer <token>`
 - `Content-Type: multipart/form-data` (if uploading photo)
 
 **Form Data:**
+
 - `title` (string, required): Brief title
 - `description` (string, required): Detailed description
 - `category` (string, required): Category (e.g., "Maintenance", "Noise", "Parking")
 - `photo` (file, optional): Image file (jpeg, png, gif, webp; max 5 MB)
 
 **Response (201):**
+
 ```json
 {
   "id": 5,
@@ -156,6 +171,7 @@ Create a new complaint (resident only). Supports optional photo upload.
 ```
 
 **Errors:**
+
 - `400` — Missing required fields
 - `401` — Unauthorized
 - `400` — Invalid file format or file too large (>5 MB)
@@ -164,11 +180,13 @@ Create a new complaint (resident only). Supports optional photo upload.
 ---
 
 #### `GET /complaints/my`
+
 Get all complaints submitted by the current resident.
 
 **Headers:** `Authorization: Bearer <token>`
 
 **Response (200):**
+
 ```json
 [
   {
@@ -203,16 +221,19 @@ Get all complaints submitted by the current resident.
 ```
 
 **Errors:**
+
 - `401` — Unauthorized
 
 ---
 
 #### `GET /complaints`
+
 Get all complaints (admin only). Supports filtering and pagination.
 
 **Headers:** `Authorization: Bearer <token>`
 
 **Query Parameters:**
+
 - `category` (string): Filter by category
 - `status` (string): Filter by status (Open, In Progress, Resolved, Closed)
 - `priority` (string): Filter by priority (Low, Medium, High)
@@ -225,6 +246,7 @@ Get all complaints (admin only). Supports filtering and pagination.
 **Example:** `/complaints?status=Open&isOverdue=true&page=1&limit=10`
 
 **Response (200):**
+
 ```json
 {
   "total": 15,
@@ -271,17 +293,20 @@ Get all complaints (admin only). Supports filtering and pagination.
 ```
 
 **Errors:**
+
 - `401` — Unauthorized
 - `403` — Admin access required
 
 ---
 
 #### `GET /complaints/dashboard`
+
 Get admin dashboard statistics.
 
 **Headers:** `Authorization: Bearer <token>`
 
 **Response (200):**
+
 ```json
 {
   "totalComplaints": 45,
@@ -294,20 +319,24 @@ Get admin dashboard statistics.
 ```
 
 **Errors:**
+
 - `401` — Unauthorized
 - `403` — Admin access required
 
 ---
 
 #### `PATCH /complaints/:id/status`
+
 Update complaint status (admin only). Triggers email notification to resident.
 
 **Headers:** `Authorization: Bearer <token>`
 
 **URL Parameters:**
+
 - `id` (integer): Complaint ID
 
 **Request Body:**
+
 ```json
 {
   "status": "In Progress",
@@ -319,6 +348,7 @@ Update complaint status (admin only). Triggers email notification to resident.
 **Note:** Setting status to `Resolved` automatically sets it to `Closed` and records `resolvedAt` timestamp.
 
 **Response (200):**
+
 ```json
 {
   "id": 5,
@@ -337,6 +367,7 @@ Update complaint status (admin only). Triggers email notification to resident.
 ```
 
 **Errors:**
+
 - `400` — Invalid status
 - `400` — Cannot update closed complaints
 - `401` — Unauthorized
@@ -346,14 +377,17 @@ Update complaint status (admin only). Triggers email notification to resident.
 ---
 
 #### `PATCH /complaints/:id/priority`
+
 Update complaint priority (admin only).
 
 **Headers:** `Authorization: Bearer <token>`
 
 **URL Parameters:**
+
 - `id` (integer): Complaint ID
 
 **Request Body:**
+
 ```json
 {
   "priority": "High",
@@ -364,6 +398,7 @@ Update complaint priority (admin only).
 **Valid Priorities:** `Low`, `Medium`, `High`
 
 **Response (200):**
+
 ```json
 {
   "id": 5,
@@ -377,6 +412,7 @@ Update complaint priority (admin only).
 ```
 
 **Errors:**
+
 - `400` — Invalid priority
 - `401` — Unauthorized
 - `403` — Admin access required
@@ -385,6 +421,7 @@ Update complaint priority (admin only).
 ---
 
 #### `POST /complaints/flag-overdue`
+
 Flag all complaints exceeding the overdue threshold (admin only).
 
 **Headers:** `Authorization: Bearer <token>`
@@ -392,6 +429,7 @@ Flag all complaints exceeding the overdue threshold (admin only).
 **Threshold Configuration:** Controlled by `OVERDUE_THRESHOLD_DAYS` env var (default: 7 days).
 
 **Response (200):**
+
 ```json
 {
   "message": "Overdue complaints flagged successfully",
@@ -400,11 +438,13 @@ Flag all complaints exceeding the overdue threshold (admin only).
 ```
 
 **Behavior:**
+
 - Finds all complaints with status `Open` or `In Progress` where `isOverdue = false` and `createdAt <= NOW() - OVERDUE_THRESHOLD_DAYS`
 - Sets `isOverdue = true` for each match
 - Creates a `flagged_overdue` history entry for each flagged complaint
 
 **Errors:**
+
 - `401` — Unauthorized
 - `403` — Admin access required
 
@@ -413,11 +453,13 @@ Flag all complaints exceeding the overdue threshold (admin only).
 ### Notices
 
 #### `GET /notices`
+
 Get all notices (public to all authenticated users).
 
 **Headers:** `Authorization: Bearer <token>`
 
 **Response (200):**
+
 ```json
 [
   {
@@ -450,16 +492,19 @@ Get all notices (public to all authenticated users).
 **Ordering:** Important notices appear first, followed by creation date (newest first).
 
 **Errors:**
+
 - `401` — Unauthorized
 
 ---
 
 #### `POST /notices`
+
 Create a new notice (admin only). If `isImportant: true`, sends an email to all residents.
 
 **Headers:** `Authorization: Bearer <token>`
 
 **Request Body:**
+
 ```json
 {
   "title": "Scheduled maintenance: Water supply",
@@ -472,6 +517,7 @@ Create a new notice (admin only). If `isImportant: true`, sends an email to all 
 **Optional:** `isImportant` (default: false)
 
 **Response (201):**
+
 ```json
 {
   "id": 2,
@@ -490,6 +536,7 @@ Create a new notice (admin only). If `isImportant: true`, sends an email to all 
 **Email Sent:** If `isImportant: true`, an email is sent to all residents with the notice details.
 
 **Errors:**
+
 - `400` — Missing title or content
 - `401` — Unauthorized
 - `403` — Admin access required
@@ -497,14 +544,17 @@ Create a new notice (admin only). If `isImportant: true`, sends an email to all 
 ---
 
 #### `DELETE /notices/:id`
+
 Delete a notice (admin only).
 
 **Headers:** `Authorization: Bearer <token>`
 
 **URL Parameters:**
+
 - `id` (integer): Notice ID
 
 **Response (200):**
+
 ```json
 {
   "message": "Notice deleted"
@@ -512,6 +562,7 @@ Delete a notice (admin only).
 ```
 
 **Errors:**
+
 - `401` — Unauthorized
 - `403` — Admin access required
 - `404` — Notice not found
@@ -543,6 +594,7 @@ All error responses follow this format:
 ```
 
 **Common HTTP Status Codes:**
+
 - `200` — OK
 - `201` — Created
 - `400` — Bad Request (validation error)
@@ -559,12 +611,14 @@ All error responses follow this format:
 ### Triggered Events
 
 **1. Complaint Status Update**
+
 - Trigger: Admin updates complaint status via `PATCH /complaints/:id/status`
 - Recipient: Complaint resident
 - Subject: `Complaint #<id> Status Update: <status>`
 - Includes: Complaint title, new status, category, and admin note (if provided)
 
 **2. Important Notice**
+
 - Trigger: Admin creates notice with `isImportant: true` via `POST /notices`
 - Recipients: All residents
 - Subject: Notice title
@@ -575,6 +629,7 @@ All error responses follow this format:
 **Provider:** Nodemailer with Gmail SMTP (configurable)  
 **Fallback:** Ethereal (test email service) if no credentials provided  
 **Configuration:**
+
 - `EMAIL_HOST` — SMTP host (default: smtp.gmail.com)
 - `EMAIL_PORT` — SMTP port (default: 587)
 - `EMAIL_SECURE` — Use TLS (default: false)
@@ -679,9 +734,11 @@ Authorization: Bearer <token>
 ## Health Check
 
 #### `GET /health`
+
 Simple health check endpoint (no authentication required).
 
 **Response (200):**
+
 ```json
 {
   "status": "ok",

@@ -1,4 +1,4 @@
-# 🏢 Society Maintenance Tracker
+# 🏢 Maintaina - (Society Maintenance Tracker)
 
 A full-stack platform for apartment societies to manage maintenance complaints, track their full history, post notices, and keep residents informed via email.
 
