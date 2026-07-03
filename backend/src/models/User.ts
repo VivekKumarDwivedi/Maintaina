@@ -10,6 +10,8 @@ class User extends Model {
   declare role: "resident" | "admin";
   declare flatNumber?: string;
   declare phone?: string;
+  declare resetPasswordToken?: string | null;
+  declare resetPasswordExpires?: Date | null;
 
   public async comparePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
@@ -42,6 +44,8 @@ export default (sequelize: Sequelize) => {
       },
       flatNumber: { type: DataTypes.STRING },
       phone: { type: DataTypes.STRING },
+      resetPasswordToken: { type: DataTypes.STRING },
+      resetPasswordExpires: { type: DataTypes.DATE },
     },
     {
       sequelize,

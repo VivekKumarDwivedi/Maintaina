@@ -122,4 +122,41 @@ const sendImportantNotice = async (
   }
 };
 
-export { sendComplaintStatusUpdate, sendImportantNotice };
+const sendPasswordResetEmail = async (
+  user: { email: string; name: string },
+  token: string
+) => {
+  try {
+    const t = await getTransporter();
+    const info = await t.sendMail({
+      from:
+        process.env.EMAIL_FROM || "Society Maintenance <noreply@society.com>",
+      to: user.email,
+      subject: "🔒 Reset Your Password - Society Maintenance Tracker",
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+          <h2 style="color:#2563eb">Society Maintenance Tracker</h2>
+          <p>Dear ${user.name},</p>
+          <p>We received a request to reset your password. Use the verification code below to set a new password. This code will expire in 15 minutes.</p>
+          <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:16px;text-align:center;margin:16px 0">
+            <span style="font-size:24px;font-weight:700;letter-spacing:4px;color:#1e40af">${token}</span>
+          </div>
+          <p>If you did not request a password reset, you can safely ignore this email.</p>
+          <p style="color:#64748b;font-size:12px;margin-top:24px">Society Maintenance Tracker</p>
+        </div>
+      `,
+    });
+    logPreviewUrl(info);
+  } catch (err: unknown) {
+    console.error(
+      "Email send error:",
+      err instanceof Error ? err.message : err
+    );
+  }
+};
+
+export {
+  sendComplaintStatusUpdate,
+  sendImportantNotice,
+  sendPasswordResetEmail,
+};

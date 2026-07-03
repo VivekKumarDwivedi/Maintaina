@@ -82,12 +82,16 @@ export const api = {
     fetch(`${API_BASE}/complaints?${params}`, { headers: headers() }).then(handleResponse),
   getDashboard: (): Promise<DashboardStats> =>
     fetch(`${API_BASE}/complaints/dashboard`, { headers: headers() }).then(handleResponse),
-  updateStatus: (id: string, body: { status: string }): Promise<Complaint> =>
+  updateStatus: (id: string, body: { status: string; note?: string }): Promise<Complaint> =>
     fetch(`${API_BASE}/complaints/${id}/status`, { method: 'PATCH', headers: headers(), body: JSON.stringify(body) }).then(handleResponse),
-  updatePriority: (id: string, body: { priority: string }): Promise<Complaint> =>
+  updatePriority: (id: string, body: { priority: string; note?: string }): Promise<Complaint> =>
     fetch(`${API_BASE}/complaints/${id}/priority`, { method: 'PATCH', headers: headers(), body: JSON.stringify(body) }).then(handleResponse),
   flagOverdue: (): Promise<{ message: string }> =>
     fetch(`${API_BASE}/complaints/flag-overdue`, { method: 'POST', headers: headers() }).then(handleResponse),
+  forgotPassword: (email: string): Promise<{ message: string }> =>
+    fetch(`${API_BASE}/auth/forgot-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }).then(handleResponse),
+  resetPassword: (body: { email: string; token: string; newPassword: string }): Promise<{ message: string }> =>
+    fetch(`${API_BASE}/auth/reset-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(handleResponse),
 
   // Notices
   getNotices: (): Promise<Notice[]> =>

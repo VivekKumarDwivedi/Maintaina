@@ -3,10 +3,10 @@ import type { Sequelize } from "sequelize";
 import type { User } from "./User";
 
 class Complaint extends Model {
-  public id!: number;
-  public title!: string;
-  public description!: string;
-  public category!:
+  declare id: number;
+  declare title: string;
+  declare description: string;
+  declare category:
     | "Plumbing"
     | "Electrical"
     | "Structural"
@@ -15,14 +15,14 @@ class Complaint extends Model {
     | "Lift"
     | "Parking"
     | "Other";
-  public status!: "Open" | "In Progress" | "Resolved" | "Closed";
-  public priority!: "Low" | "Medium" | "High";
-  public photoPath?: string;
-  public isOverdue!: boolean;
-  public resolvedAt?: Date;
-  public closedAt?: Date;
-  public residentId!: number;
-  public resident?: User;
+  declare status: "Open" | "In Progress" | "Resolved" | "Closed";
+  declare priority: "Low" | "Medium" | "High";
+  declare photoPath?: string;
+  declare isOverdue: boolean;
+  declare resolvedAt?: Date;
+  declare closedAt?: Date;
+  declare residentId: number;
+  declare resident?: User;
 }
 
 export default (sequelize: Sequelize) => {

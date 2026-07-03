@@ -2,15 +2,15 @@ import { Model, DataTypes } from "sequelize";
 import type { Sequelize } from "sequelize";
 
 class ComplaintHistory extends Model {
-  public id!: number;
-  public complaintId!: number;
-  public actorId!: number;
-  public fromStatus?: string;
-  public toStatus?: string;
-  public fromPriority?: string;
-  public toPriority?: string;
-  public note?: string;
-  public action!:
+  declare id: number;
+  declare complaintId: number;
+  declare actorId: number;
+  declare fromStatus?: string;
+  declare toStatus?: string;
+  declare fromPriority?: string;
+  declare toPriority?: string;
+  declare note?: string;
+  declare action:
     "created" | "status_changed" | "priority_changed" | "flagged_overdue";
 }
 

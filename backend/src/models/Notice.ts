@@ -2,11 +2,11 @@ import { Model, DataTypes } from "sequelize";
 import type { Sequelize } from "sequelize";
 
 class Notice extends Model {
-  public id!: number;
-  public title!: string;
-  public content!: string;
-  public isImportant!: boolean;
-  public adminId!: number;
+  declare id: number;
+  declare title: string;
+  declare content: string;
+  declare isImportant: boolean;
+  declare adminId: number;
 }
 
 export default (sequelize: Sequelize) => {

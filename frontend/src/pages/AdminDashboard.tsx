@@ -66,8 +66,8 @@ function UpdateModal({ complaint, onClose, onSuccess }: UpdateModalProps) {
     setLoading(true);
     setError('');
     try {
-      if (status !== complaint.status) await api.updateStatus(complaint.id, { status, note } as any);
-      if (priority !== complaint.priority) await api.updatePriority(complaint.id, { priority, note } as any);
+      if (status !== complaint.status) await api.updateStatus(complaint.id, { status, note });
+      if (priority !== complaint.priority) await api.updatePriority(complaint.id, { priority, note });
       onSuccess();
     } catch (err: any) {
       setError(err.message);
